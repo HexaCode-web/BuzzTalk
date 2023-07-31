@@ -1,5 +1,4 @@
 import React from "react";
-import "./Login/login.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setActivePage } from "../../Redux/ActivePage";
 import { RESETPASSWORD } from "../../server";

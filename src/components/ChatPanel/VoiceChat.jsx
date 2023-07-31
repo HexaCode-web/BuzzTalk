@@ -49,6 +49,8 @@ const VoiceChat = ({ FetchedCall }) => {
 
   const leaveCall = async () => {
     await client.leave();
+    client.release();
+
     await UPDATEDOC("chats", activeChat.chatID, {
       voiceCall: {
         appId: "",

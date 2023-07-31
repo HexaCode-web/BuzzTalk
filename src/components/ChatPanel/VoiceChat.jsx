@@ -48,7 +48,6 @@ const VoiceChat = ({ FetchedCall }) => {
   };
 
   const leaveCall = async () => {
-    localAudioTrack.close();
     await client.leave();
     await UPDATEDOC("chats", activeChat.chatID, {
       voiceCall: {

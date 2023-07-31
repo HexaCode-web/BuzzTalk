@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { UPDATEDOC } from "../../server";
 import voiceChat from "../../assets/voiceChat.png";
 const VoiceChat = ({ FetchedCall }) => {
-  console.log(FetchedCall);
   const user = useSelector((state) => ({ ...state.user })).user;
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -60,14 +59,9 @@ const VoiceChat = ({ FetchedCall }) => {
       },
     });
   };
-  const getActiveUsers = () => {
-    const activeUsers = client.remoteUsers;
-    console.log(activeUsers);
-  };
 
   return (
     <div style={{ display: "flex" }}>
-      <p onClick={getActiveUsers}> view</p>
       <p onClick={leaveCall}>Leave</p>
       <img src={voiceChat} onClick={StartCall} />
       <div

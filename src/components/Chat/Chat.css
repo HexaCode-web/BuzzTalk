@@ -1,0 +1,58 @@
+.Chat {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 10px;
+  gap: 10px;
+  width: calc(100% - 10px);
+  cursor: pointer;
+  transition: 0.2s all;
+  min-height: 70px;
+  border: 1px solid transparent;
+  color: white;
+  border-bottom: 1px solid var(--BorderColors);
+}
+.Chat:hover {
+  border: 1px solid var(--BorderColors);
+  background-color: var(--BorderColors);
+  color: black !important;
+}
+.Chat .ProfilePic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.Chat .Details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.Chat .Details .Person {
+  font-weight: bolder;
+  font-size: 1rem;
+}
+.Chat .Details .LastText,
+.Chat .Details .Person-Date-wrapper .Date {
+  display: flex;
+  flex-direction: column;
+  font-weight: 300;
+  font-size: 0.7rem;
+  opacity: 0.7;
+  width: 80%; /* Set the container width to the desired width */
+  white-space: nowrap; /* Prevent the text from wrapping */
+  overflow: hidden; /* Hide the overflowing text */
+  text-overflow: ellipsis; /* Display ellipsis (...) for the overflowed text */
+}
+.Chat .Details .Person-Date-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+}
+.Chat .Details .Person-Date-wrapper .Date {
+  width: fit-content;
+}

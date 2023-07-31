@@ -1,0 +1,30 @@
+.Home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.Home .Container {
+  overflow: hidden;
+  display: flex;
+  margin: auto;
+  width: 90%;
+  border-radius: 10px;
+  height: 90%;
+  border: 1px solid var(--BorderColors);
+}
+.Home .Container .SideBar {
+  width: 20%;
+  overflow: hidden;
+  background-color: var(--backgroundColor);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.Home .Container .SideBar .BottomStyles {
+  height: 60px;
+  background-color: var(--BorderColors);
+  width: 100%;
+  margin-top: auto;
+}

@@ -1,0 +1,34 @@
+.Navbar {
+  border-top-left-radius: 10px;
+  background-color: var(--BorderColors);
+  height: 30px;
+  color: black;
+  display: flex;
+  padding: 10px 5px;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 10px);
+}
+.Navbar .Logo {
+  font-weight: 700;
+}
+.Navbar .ProfilePic {
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  object-fit: cover;
+}
+.Navbar .User {
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Navbar button {
+  background-color: transparent;
+  border: 1px solid var(--backgroundColor);
+  color: black;
+  width: 50px;
+  height: 20px;
+  font-size: 0.7rem;
+}

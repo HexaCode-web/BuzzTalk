@@ -1,0 +1,24 @@
+.SearchBar {
+  width: 100%;
+}
+
+.SearchBar .Search {
+  height: 30px;
+  width: 100%;
+  margin: auto;
+  background-color: transparent;
+  border: none;
+  color: white;
+  border-bottom: 1px solid var(--BorderColors);
+}
+.SearchBar input:focus {
+  outline: none;
+}
+.SearchBar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.Chats {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 102%;
+}

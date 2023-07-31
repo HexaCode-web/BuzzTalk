@@ -1,0 +1,127 @@
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: 5px;
+  scrollbar-color: var(--BorderColors) #ffffff00;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--BorderColors);
+  border-radius: 0;
+}
+:root {
+  --BorderColors: #e4ab02;
+
+  --backgroundColor: #402e32;
+  --textColor: rgba(255, 255, 255, 0.87);
+  --SecondLargeColor: #cda291;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-size: 16px;
+  color-scheme: light dark;
+  color: var(--textColor);
+  background-color: var(--backgroundColor);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.Hide {
+  display: none !important;
+}
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+  align-items: center;
+  min-width: 320px;
+
+  min-height: 100vh;
+}
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+h1 {
+  font-size: 3.2em;
+}
+.formItem {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  transition: 0.5s all;
+}
+.formItem input {
+  background-color: transparent;
+  margin: auto 20px 0;
+  width: 80%;
+  border: none;
+  border-bottom: 1px solid var(--BorderColors);
+  height: 50px;
+}
+.formItem input:focus {
+  outline: none;
+}
+.formItem.Image {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--BorderColors);
+  cursor: pointer;
+  color: var(--secondaryColor);
+  transition: border-color 0.25s;
+  height: 40px;
+}
+.button:hover {
+  border-color: var(--secondaryColor);
+}
+.button:focus,
+.button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  .button {
+    background-color: #f9f9f9;
+  }
+}

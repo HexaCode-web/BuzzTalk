@@ -6,7 +6,7 @@ const PhotoOverlay = ({ photoURL, onClose }) => {
       <div className="photo-overlay-content">
         <img src={photoURL} alt="Enlarged Photo" />
         <button className="close-button" onClick={onClose}>
-          Close
+          Clos
         </button>
       </div>
     </div>

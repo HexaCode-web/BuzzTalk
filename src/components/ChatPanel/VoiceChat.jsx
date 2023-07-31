@@ -53,16 +53,27 @@ const VoiceChat = ({ FetchedCall }) => {
   };
 
   const leaveCall = async () => {
-    await UPDATEDOC("chats", activeChat.chatID, {
-      voiceCall: {
-        appId: "",
-        channel: null,
-        token: null,
-        uid: null,
-      },
-    });
-    await client?.leave(); // Ensure the client exists before calling leave()
-    setInCall(false); // Set the call status to false
+    try {
+      // Stop and release the local audio track
+      if (localAudioTrack) {
+        localAudioTrack.stop();
+        localAudioTrack.close();
+      }
+
+      // Leave the Agora channel
+      await UPDATEDOC("chats", activeChat.chatID, {
+        voiceCall: {
+          appId: "",
+          channel: null,
+          token: null,
+          uid: null,
+        },
+      });
+      await client?.leave();
+      setInCall(false);
+    } catch (error) {
+      console.error("Error leaving call:", error);
+    }
   };
 
   return (

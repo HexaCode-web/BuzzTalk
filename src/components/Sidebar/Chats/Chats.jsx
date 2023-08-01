@@ -78,7 +78,7 @@ const Chats = () => {
           makerUID: null,
           remoteUID: null,
         },
-        VoiceCall: {
+        voiceCall: {
           channel: null,
           makerUID: null,
           remoteUID: null,

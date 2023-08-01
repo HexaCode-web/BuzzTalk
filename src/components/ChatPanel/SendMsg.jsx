@@ -6,11 +6,13 @@ import { useState } from "react";
 import { UPDATEDOC, UPLOADPHOTO } from "../../server";
 import { Timestamp, arrayUnion, serverTimestamp } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
+import Emojis from "./Emojis";
+import emojiPic from "../../assets/emoji.png";
 const SendMsg = () => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const currentUser = useSelector((state) => ({ ...state.user })).user;
   const textareaRef = useRef(null);
-
+  const [showPicker, setShowPicker] = useState(false);
   const [text, setText] = useState("");
   const [photo, setPhoto] = useState(null);
   const [newDocument, setNewDocument] = useState({
@@ -19,6 +21,13 @@ const SendMsg = () => {
     fileExtension: "",
     tempFile: null,
   });
+  const onEmojiClick = (emojiData, event) => {
+    const emojiChar = String.fromCodePoint(parseInt(emojiData.unified, 16));
+
+    setText((prevInput) => prevInput + emojiChar);
+
+    setShowPicker(false);
+  };
   const handleDocEdit = async (e) => {
     const file = e.target.files[0];
     const FileName = file.name;
@@ -115,6 +124,12 @@ const SendMsg = () => {
         }}
       />
       <div className="Utilities">
+        <img
+          className="emoji-icon"
+          src={emojiPic}
+          onClick={() => setShowPicker((val) => !val)}
+        />
+        {showPicker && <Emojis HandleClick={onEmojiClick} />}
         <div className="formItem">
           <label htmlFor="File">
             <img src={Attachment} />

@@ -73,7 +73,16 @@ const Chats = () => {
       "chats",
       combinedID,
       {
-        VideoCallLink: null,
+        VideoCall: {
+          channel: null,
+          makerUID: null,
+          remoteUID: null,
+        },
+        VoiceCall: {
+          channel: null,
+          makerUID: null,
+          remoteUID: null,
+        },
         chatID: combinedID,
         messages: [],
       },

@@ -46,10 +46,18 @@
 }
 .ChatPanel .BottomBar .Utilities {
   display: flex;
+  position: relative;
   height: 100%;
   justify-content: center;
   align-items: center;
   gap: 10px;
+}
+.ChatPanel .BottomBar .Utilities label {
+  max-height: 25px;
+}
+.Utilities .emoji-icon {
+  width: 25px;
+  height: 25px;
 }
 .ChatPanel .BottomBar textarea {
   height: 100%;
@@ -88,14 +96,15 @@
 .ChatPanel .BottomBar img:hover {
   transform: scale(1.1);
 }
-.ChatPanel .Message {
+.ChatPanel .MessagesWrapper .Message {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  margin: 20px 20px;
+  margin: 2px 20px;
+
   width: fit-content;
 }
-.photo-overlay {
+.ChatPanel .MessagesWrapper .photo-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -126,15 +135,29 @@
 .Hidden {
   display: none !important;
 }
+.VoiceCallWrapper {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+.VoiceCallWrapper button {
+  background-color: transparent;
+  border: 1px solid var(--backgroundColor);
+  color: black;
+  width: 50px;
+  height: 20px;
+  font-size: 0.7rem;
+}
 .circle {
-  min-width: 5px;
-  min-height: 5px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background-color: rgb(0, 0, 0);
   animation: blink 1.5s infinite; /* Apply the animation to the element */
 }
 
-.photo-overlay-content {
+.ChatPanel .MessagesWrapper .photo-overlay-content {
   max-width: 70%;
   max-height: 70%;
   display: flex;
@@ -142,13 +165,13 @@
   justify-content: center;
 }
 
-.photo-overlay img {
+.ChatPanel .MessagesWrapper .photo-overlay img {
   width: 100%;
   border-radius: 15px;
   height: 100%;
 }
 
-.close-button {
+.ChatPanel .MessagesWrapper .close-button {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -158,6 +181,12 @@
   cursor: pointer;
 }
 
+.Emoji-wrapper {
+  position: absolute;
+  right: 129px;
+
+  bottom: 50px;
+}
 .ChatPanel .Message.Sender {
   justify-content: flex-start;
   flex-direction: row-reverse;
@@ -167,9 +196,10 @@
   display: flex;
   flex-direction: column;
 }
-.ChatPanel .Date {
+.ChatPanel .MessagesWrapper .Date {
   font-size: 0.7rem;
   opacity: 0.7;
+  margin-bottom: 20px;
 }
 .ChatPanel .Message.Receiver .messageBody {
   background-color: var(--SecondLargeColor);
@@ -178,11 +208,13 @@
   border-radius: 10px;
   border-top-left-radius: 0px;
 }
-.messageBody .Review {
-  cursor: pointer;
-  max-width: 250px;
-  max-height: 250px;
-  border-radius: 15px;
+.ChatPanel .Message.System {
+  background-color: transparent;
+
+  margin: 10px auto;
+}
+.ChatPanel .Message.System .messageWrapper {
+  align-items: center;
 }
 .ChatPanel .Message.Sender .messageBody {
   background-color: var(--BorderColors);
@@ -190,6 +222,12 @@
   padding: 10px;
   border-radius: 10px;
   border-top-right-radius: 0px;
+}
+.messageBody .Review {
+  cursor: pointer;
+  max-width: 250px;
+  max-height: 250px;
+  border-radius: 15px;
 }
 .ChatPanel .Message .messageInfo {
   display: flex;

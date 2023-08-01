@@ -77,20 +77,13 @@ const Chat = ({ id, HandleClick, ChatData }) => {
   };
   const Person = ChatData.lastMessage
     ? currentUser.uid === ChatData.lastMessage.Sender
-      ? "You"
-      : ChatData.userInfo.displayName
+      ? "You:"
+      : ChatData.lastMessage.Sender === "SYSTEM"
+      ? ""
+      : `:${ChatData.userInfo.displayName}`
     : "";
   return (
-    <div
-      className="Chat"
-      onClick={
-        HandleClick
-          ? HandleClick
-          : () => {
-              handleClick();
-            }
-      }
-    >
+    <div className="Chat" onClick={HandleClick ? HandleClick : handleClick}>
       <img src={ChatData.userInfo.photoURL} className="ProfilePic" />
       <div className="Details">
         <div className="Person-Date-wrapper">
@@ -100,7 +93,7 @@ const Chat = ({ id, HandleClick, ChatData }) => {
         </div>
         {ChatData.lastMessage && (
           <span className="LastText">
-            {Person}: {ChatData.lastMessage.text}
+            {Person} {ChatData.lastMessage.text}
             <span>
               {ChatData.lastMessage.hasPhoto ? "Message Contains an image" : ""}
             </span>

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import PhotoOverlay from "./PhotoOverlay";
-const Message = ({ message }) => {
+const Message = ({ message, HideUserName, hideDate }) => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const currentUser = useSelector((state) => ({ ...state.user })).user;
   const [showOverlay, setShowOverlay] = useState(false);
   const ref = useRef();
+
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
@@ -41,19 +42,28 @@ const Message = ({ message }) => {
   const handleCloseOverlay = () => {
     setShowOverlay(false);
   };
-
+  let systemSent = message.SenderID === "SYSTEM" ? true : false;
   return (
-    <div className={`Message ${Sending ? "Sender" : "Receiver"}`} ref={ref}>
-      <div className="messageInfo">
-        <img
-          src={Sending ? currentUser.photoURL : activeChat.user.photoURL}
-          className="ProfilePic"
-        />
-      </div>
-      <div className="messageWrapper">
-        <span className="UserName">
-          {Sending ? currentUser.displayName : activeChat.user.displayName}
-        </span>
+    <div
+      className={`Message ${
+        Sending ? "Sender" : systemSent ? "System" : "Receiver"
+      } `}
+      ref={ref}
+    >
+      {!systemSent && (
+        <div className="messageInfo">
+          <img
+            src={Sending ? currentUser.photoURL : activeChat.user.photoURL}
+            className="ProfilePic"
+          />
+        </div>
+      )}
+      <div className="messageWrapper" title={formatDateIn12HourFormat(date)}>
+        {!systemSent && !HideUserName && (
+          <span className="UserName">
+            {Sending ? currentUser.displayName : activeChat.user.displayName}
+          </span>
+        )}
         <div className="messageBody">
           <span>{message.text}</span>
           {message.photoURL && (
@@ -74,7 +84,9 @@ const Message = ({ message }) => {
             />
           )}
         </div>
-        <div className="Date">{formatDateIn12HourFormat(date)}</div>
+        {!hideDate && (
+          <div className="Date">{formatDateIn12HourFormat(date)}</div>
+        )}
       </div>
     </div>
   );

@@ -9,7 +9,10 @@ const userSlice = createSlice({
     SetUser: (state, action) => {
       state.user = action.payload;
     },
+    changeCallStatutes: (state, action) => {
+      state.user.hasCall = action.payload;
+    },
   },
 });
 export default userSlice.reducer;
-export const { SetUser } = userSlice.actions;
+export const { SetUser, changeCallStatutes } = userSlice.actions;

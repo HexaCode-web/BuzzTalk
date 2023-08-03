@@ -80,7 +80,7 @@ const Chat = ({ id, HandleClick, ChatData }) => {
       ? "You:"
       : ChatData.lastMessage.Sender === "SYSTEM"
       ? ""
-      : `:${ChatData.userInfo.displayName}`
+      : `${ChatData.userInfo.displayName}`
     : "";
   return (
     <div className="Chat" onClick={HandleClick ? HandleClick : handleClick}>
@@ -93,7 +93,7 @@ const Chat = ({ id, HandleClick, ChatData }) => {
         </div>
         {ChatData.lastMessage && (
           <span className="LastText">
-            {Person} {ChatData.lastMessage.text}
+            {Person}: {ChatData.lastMessage.text}
             <span>
               {ChatData.lastMessage.hasPhoto ? "Message Contains an image" : ""}
             </span>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateToast } from "../../../App";
-import { CURRENTUSER, LOGIN } from "../../../server";
+import { CURRENTUSER, GETDOC, LOGIN, UPDATEDOC } from "../../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { SetUser } from "../../../Redux/UserAuth";
 import { setActivePage } from "../../../Redux/ActivePage";
@@ -25,15 +25,22 @@ const Login = () => {
     try {
       await LOGIN(email, password);
       const User = CURRENTUSER();
+      await UPDATEDOC("Users", User.uid, {
+        active: true,
+      });
+      const FetchedUser = await GETDOC("Users", User.uid);
       dispatch(
         SetUser({
           uid: User.uid,
           displayName: User.displayName,
           photoURL: User.photoURL,
           email: User.email,
+          active: FetchedUser.active,
+          hasCall: FetchedUser.hasCall,
         })
       );
       navigate("/");
+
       dispatch(setActivePage("null"));
     } catch (error) {
       if (error.message.includes("auth/user-not-found")) {

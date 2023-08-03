@@ -1,6 +1,6 @@
 import React from "react";
 import "./Navbar.css";
-import { SIGNOUT } from "../../../server";
+import { SIGNOUT, UPDATEDOC } from "../../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { SetUser } from "../../../Redux/UserAuth";
 import { Navigate } from "react-router-dom";
@@ -12,6 +12,9 @@ const Navbar = () => {
     await SIGNOUT();
     dispatch(SetUser(null));
     dispatch(setActivePage("Login"));
+    await UPDATEDOC("Users", currentUser.user.uid, {
+      active: false,
+    });
 
     <Navigate to="/Portal" />;
   };

@@ -8,6 +8,7 @@ import { onSnapshot, doc } from "firebase/firestore";
 import { DB } from "../../server";
 import VoiceCall from "./VoiceCall";
 import { VideoCall } from "./VideoCall";
+import CallPopup from "./CallPopup";
 
 const ChatPanel = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const ChatPanel = () => {
       };
     }
   }, [activeChat.chatID, dispatch]);
+
   return (
     <>
       {activeChat.user ? (
@@ -40,7 +42,9 @@ const ChatPanel = () => {
             <div className="Options">
               <VoiceCall FetchedCall={FetchedCall} />
               <VideoCall fetchedMeeting={fetchedMeeting} />
-
+              {FetchedCall?.status === "Ringing" && (
+                <CallPopup FetchedCall={FetchedCall} />
+              )}
               <div id="Iframe"></div>
               <img src={More} alt="More" />
             </div>

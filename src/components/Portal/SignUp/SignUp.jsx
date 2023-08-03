@@ -62,14 +62,31 @@ const SignUp = () => {
           email,
           photoURL,
           uid: user.uid,
+          hasCall: false,
+          active: false,
         },
         true
       );
       await SETDOC("UsersChats", user.uid, {}, true);
       if (UpdatedUser) {
         CreateToast("Account has been created", "success");
+
+        setUploading(false);
+        const User = CURRENTUSER();
+        console.log(User);
+        dispatch(
+          SetUser({
+            uid: User.uid,
+            displayName: User.displayName,
+            photoURL: User.photoURL,
+            email: User.email,
+          })
+        );
+        <Navigate to="/" />;
       }
     } catch (error) {
+      setUploading(false);
+
       console.log(error.message);
       if (error.message.includes("auth/user-not-found")) {
         setErr("no such user");
@@ -86,19 +103,6 @@ const SignUp = () => {
       } else {
         setErr(error.message);
       }
-    } finally {
-      setUploading(false);
-      const User = CURRENTUSER();
-
-      dispatch(
-        SetUser({
-          uid: User.uid,
-          displayName: User.displayName,
-          photoURL: User.photoURL,
-          email: User.email,
-        })
-      );
-      <Navigate to="/" />;
     }
   };
   return (

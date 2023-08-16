@@ -1,0 +1,28 @@
+.CallPopup {
+  z-index: 10;
+  top: 30%;
+  left: 30%;
+  position: absolute;
+  backdrop-filter: blur(10px);
+  width: 300px;
+  height: 300px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 15px;
+  border: 1px solid var(--BorderColors);
+}
+.CallPopup p {
+  color: white;
+}
+.CallPopup .button-wrapper {
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
+  align-items: center;
+}
+.CallPopup .button-wrapper button {
+  width: 70px;
+}

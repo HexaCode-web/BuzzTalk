@@ -23,7 +23,7 @@
   align-items: flex-start;
 }
 .Home .Container .SideBar .BottomStyles {
-  height: 60px;
+  height: 85px;
   background-color: var(--BorderColors);
   width: 100%;
   margin-top: auto;

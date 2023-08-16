@@ -95,6 +95,7 @@ const Chats = () => {
         displayName: searchChat.displayName,
         photoURL: searchChat.photoURL,
       },
+      [combinedID + ".unSeenCount"]: 0,
       [combinedID + ".date"]: serverTimestamp(),
     });
     await UPDATEDOC("UsersChats", searchChat.uid, {
@@ -103,6 +104,8 @@ const Chats = () => {
         displayName: currentUser.displayName,
         photoURL: currentUser.photoURL,
       },
+      [combinedID + ".unSeenCount"]: 0,
+
       [combinedID + ".date"]: serverTimestamp(),
     });
     setSearchChat(null);
@@ -153,7 +156,7 @@ const Chats = () => {
           }}
           type="Text"
           className="formItem Search"
-          placeholder="Find a Chat..."
+          placeholder="Find a Conversation..."
         ></input>
       </div>
       {matchingChats.length === 0 && Object.entries(UserChats).length === 0 && (

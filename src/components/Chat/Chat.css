@@ -11,11 +11,26 @@
   border: 1px solid transparent;
   color: white;
   border-bottom: 1px solid var(--BorderColors);
+  position: relative;
 }
-.Chat:hover {
+.Chat:hover,
+.ActiveChat {
   border: 1px solid var(--BorderColors);
+  border-radius: 15px;
+  width: calc(100% - 25px);
+  margin: 10px;
+}
+.ProfilePic-wrapper {
+  position: relative;
+}
+.Activity {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
   background-color: var(--BorderColors);
-  color: black !important;
 }
 .Chat .ProfilePic {
   width: 40px;
@@ -35,6 +50,7 @@
   font-weight: bolder;
   font-size: 1rem;
 }
+
 .Chat .Details .LastText,
 .Chat .Details .Person-Date-wrapper .Date {
   display: flex;
@@ -55,4 +71,20 @@
 }
 .Chat .Details .Person-Date-wrapper .Date {
   width: fit-content;
+}
+.Chat .UnreadCount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--BorderColors);
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 35px;
+  right: 10px;
+}
+.Chat .UnreadCount .Number {
+  color: black;
+  font-weight: 600;
 }

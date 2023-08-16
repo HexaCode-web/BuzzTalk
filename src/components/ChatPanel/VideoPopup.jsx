@@ -2,53 +2,71 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { GETDOC, UPDATEDOC } from "../../server";
 import { v4 as uuid } from "uuid";
-import { Timestamp, arrayUnion } from "firebase/firestore";
+import { Timestamp, arrayUnion, serverTimestamp } from "firebase/firestore";
 import "./CallPopup.css";
-const CallPopup = ({ FetchedCall }) => {
+import { CreateToast } from "../../App";
+
+const VideoPopup = ({ FetchedVideo }) => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const User = useSelector((state) => ({ ...state.user })).user;
   const [seconds, setSeconds] = useState(10);
   let intervalId;
   //send message update
-  async function handleSendUpdate(text) {
+  const handleSendUpdate = async (text) => {
     let objectToSend = {
       id: uuid(),
       SenderID: "SYSTEM",
       date: Timestamp.now(),
       mediaContainer: [],
-
       text,
     };
     await UPDATEDOC("chats", activeChat.chatID, {
       messages: arrayUnion(objectToSend),
     });
-  }
+    await UPDATEDOC("UsersChats", User.uid, {
+      [activeChat.chatID + ".lastMessage"]: {
+        text: text,
+        Sender: "SYSTEM",
+        UserSeen: true,
+      },
+      [activeChat.chatID + ".date"]: serverTimestamp(),
+    });
+    const FetchedUser = await GETDOC("Users", activeChat.user.uid);
+
+    await UPDATEDOC("UsersChats", activeChat.user.uid, {
+      [activeChat.chatID + ".lastMessage"]: {
+        text: text,
+        Sender: "SYSTEM",
+        UserSeen: activeChat.inChat && FetchedUser.active ? true : false,
+      },
+      [activeChat.chatID + ".date"]: serverTimestamp(),
+    });
+  };
   //incase of call accept
-  const AcceptCall = async () => {
+  const AcceptVideo = async () => {
     let fetchedChat = await GETDOC("chats", activeChat.chatID);
     await UPDATEDOC("chats", activeChat.chatID, {
-      voiceCall: {
+      VideoCall: {
         channel: activeChat.chatID,
-        makerUID: fetchedChat.voiceCall.makerUID,
+        makerUID: fetchedChat.VideoCall.makerUID,
         remoteUID: User.uid,
         status: "Accepted",
       },
     });
-    await handleSendUpdate(`${User.displayName} has joined the voice call`);
+    await handleSendUpdate(`${User.displayName} has joined the Video call`);
   };
   //in case of call decline
-  const DeclineCall = async () => {
+  const DeclineVideo = async () => {
     await UPDATEDOC("chats", activeChat.chatID, {
-      voiceCall: {
+      VideoCall: {
         channel: null,
         makerUID: null,
         remoteUID: null,
         status: "Declined",
       },
     });
-    await handleSendUpdate(`${User.displayName} has Declined the voice call`);
+    await handleSendUpdate(`${User.displayName} has Declined the Video call`);
   };
-  //in case of call missed
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
@@ -75,7 +93,7 @@ const CallPopup = ({ FetchedCall }) => {
   useEffect(() => {
     if (seconds === 0) {
       UPDATEDOC("chats", activeChat.chatID, {
-        voiceCall: {
+        VideoCall: {
           channel: null,
           makerUID: null,
           remoteUID: null,
@@ -83,7 +101,7 @@ const CallPopup = ({ FetchedCall }) => {
         },
       });
       handleSendUpdate(
-        `${activeChat.user.displayName} has not answered the voice call`
+        `${activeChat.user.displayName} has not answered the Video call`
       );
     }
   }, [
@@ -94,22 +112,22 @@ const CallPopup = ({ FetchedCall }) => {
   ]);
   return (
     <div className="CallPopup">
-      {FetchedCall?.makerUID === User.uid ? (
+      {FetchedVideo?.makerUID === User.uid ? (
         //if the user is hte one who started the call
 
-        <p>calling {activeChat.user.displayName}...</p>
+        <p>video calling {activeChat.user.displayName}...</p>
       ) : (
         //else
         <>
           <p>
             {activeChat.user.displayName /*the user who started the call */} is
-            requesting a call
+            requesting a video call
           </p>
           <div className="button-wrapper">
-            <button className="button" onClick={AcceptCall}>
+            <button className="button" onClick={AcceptVideo}>
               Accept
             </button>
-            <button className="button" onClick={DeclineCall}>
+            <button className="button" onClick={DeclineVideo}>
               Decline
             </button>
           </div>
@@ -119,4 +137,4 @@ const CallPopup = ({ FetchedCall }) => {
   );
 };
 
-export default CallPopup;
+export default VideoPopup;

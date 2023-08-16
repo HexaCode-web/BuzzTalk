@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import PhotoOverlay from "./PhotoOverlay";
+import "./Message.css";
 const Message = ({ message, HideUserName, hideDate }) => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const currentUser = useSelector((state) => ({ ...state.user })).user;
@@ -43,6 +44,36 @@ const Message = ({ message, HideUserName, hideDate }) => {
     setShowOverlay(false);
   };
   let systemSent = message.SenderID === "SYSTEM" ? true : false;
+  const RenderMedia = message.mediaContainer.map((media) => {
+    const validExtensions = [
+      "pdf",
+      "txt",
+      "xlsx",
+      "xls",
+      "docx",
+      "doc",
+      "pptx",
+      "ppt",
+    ];
+
+    if (validExtensions.includes(media.fileExtension)) {
+      return (
+        <a key={media.id} href={media.DownloadURL}>
+          {media.FileName}
+        </a>
+      );
+    } else {
+      return (
+        <img
+          key={media.id}
+          src={media.DownloadURL}
+          alt="Message Photo"
+          className="Review"
+          onClick={() => handleImageClick(media.DownloadURL)}
+        />
+      );
+    }
+  });
   return (
     <div
       className={`Message ${
@@ -50,6 +81,12 @@ const Message = ({ message, HideUserName, hideDate }) => {
       } `}
       ref={ref}
     >
+      {showOverlay && (
+        <PhotoOverlay
+          photoURL={enlargedPhotoURL}
+          onClose={handleCloseOverlay}
+        />
+      )}
       {!systemSent && (
         <div className="messageInfo">
           <img
@@ -66,23 +103,7 @@ const Message = ({ message, HideUserName, hideDate }) => {
         )}
         <div className="messageBody">
           <span>{message.text}</span>
-          {message.photoURL && (
-            <img
-              src={message.photoURL}
-              alt="Message Photo"
-              className="Review"
-              onClick={() => handleImageClick(message.photoURL)}
-            />
-          )}
-          {message.media && (
-            <a href={message.media.DownloadURL}>{message.media.FileName}</a>
-          )}
-          {showOverlay && (
-            <PhotoOverlay
-              photoURL={enlargedPhotoURL}
-              onClose={handleCloseOverlay}
-            />
-          )}
+          {RenderMedia}
         </div>
         {!hideDate && (
           <div className="Date">{formatDateIn12HourFormat(date)}</div>

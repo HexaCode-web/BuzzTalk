@@ -1,0 +1,133 @@
+.ChatPanel .BottomBar {
+  background-color: var(--BorderColors);
+  color: black;
+  height: fit-content;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.ChatPanel .BottomBar .TopPart {
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+}
+.ChatPanel .BottomBar .Utilities {
+  display: flex;
+  position: relative;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.ChatPanel .BottomBar .Utilities label {
+  max-height: 25px;
+}
+.Utilities .emoji-icon {
+  width: 25px;
+  height: 25px;
+}
+.ChatPanel .BottomBar textarea {
+  height: 50px;
+  width: 70%;
+  font-size: 1rem;
+  background-color: transparent;
+  border: transparent;
+  resize: none;
+  flex: 2;
+  color: black;
+  font-family: "Arial";
+  font-weight: 400;
+}
+.ChatPanel .BottomBar textarea:focus {
+  outline: none;
+}
+.ChatPanel .BottomBar textarea::placeholder {
+  color: black;
+}
+.ChatPanel .BottomBar button {
+  border: 1px solid var(--backgroundColor);
+  transition: 0.2s all;
+}
+.ChatPanel .BottomBar button:hover {
+  transform: scale(1.05);
+}
+.ChatPanel .BottomBar input:focus {
+  outline: none;
+}
+.ChatPanel .BottomBar .Utilities img,
+.ChatPanel .TopBar .Options img {
+  cursor: pointer;
+  max-width: 25px;
+  max-height: 25px;
+  transition: 0.2s all;
+}
+.ChatPanel .BottomBar .Utilities img:hover {
+  transform: scale(1.1);
+}
+.ChatPanel .BottomBar .Uploads {
+  width: 100%;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}
+.ChatPanel .BottomBar .Uploads .Media-Preview {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.ChatPanel .BottomBar .Uploads .Media-Preview .Delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+}
+.ChatPanel .BottomBar .Uploads .Media-Preview .Preview {
+  max-width: 100px;
+  max-height: 100px;
+}
+.ChatPanel .BottomBar .Uploads .Media-Preview span {
+  font-size: 0.7rem;
+}
+.ChatPanel .BottomBar .photo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  overflow-y: scroll;
+}
+.ChatPanel .BottomBar .photo-overlay-content {
+  max-width: 70%;
+  max-height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ChatPanel .BottomBar .photo-overlay img {
+  width: 100%;
+  border-radius: 15px;
+  height: 100%;
+}
+.ChatPanel .BottomBar .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}

@@ -12,10 +12,11 @@ import { CreateToast } from "../../../App";
 import { useDispatch, useSelector } from "react-redux";
 import { SetUser } from "../../../Redux/UserAuth";
 import { setActivePage } from "../../../Redux/ActivePage";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const activePage = useSelector((state) => state.activePage);
+  const navigate = useNavigate();
 
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
@@ -73,7 +74,6 @@ const SignUp = () => {
 
         setUploading(false);
         const User = CURRENTUSER();
-        console.log(User);
         dispatch(
           SetUser({
             uid: User.uid,
@@ -82,7 +82,7 @@ const SignUp = () => {
             email: User.email,
           })
         );
-        <Navigate to="/" />;
+        navigate("/");
       }
     } catch (error) {
       setUploading(false);

@@ -1,25 +1,56 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect } from "react";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { useDispatch, useSelector } from "react-redux";
 import { GETDOC, UPDATEDOC } from "../../server";
 import voiceChat from "../../assets/voiceChat.png";
 import { v4 as uuid } from "uuid";
-
+import { onSnapshot, doc } from "firebase/firestore";
+import { DB } from "../../server";
 import { Timestamp, arrayUnion } from "firebase/firestore";
 import { CreateToast } from "../../App";
-const VoiceCall = ({ FetchedCall }) => {
+const VoiceCall = () => {
   const User = useSelector((state) => ({ ...state.user })).user;
-  const dispatch = useDispatch();
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const [localAudioTrack, setLocalAudioTrack] = useState(null); // State to store the local audio track
   const [client, setClient] = useState(null);
+  const [FetchedCall, setFetchedCall] = useState(null);
   const [onGoingCall, setOnGoingCall] = useState(false);
   const [userJoined, setUserJoined] = useState(false);
+  const callAppID = import.meta.env.VITE_TEST_CALLID;
+
+  //fetch the change in the call
+  useEffect(() => {
+    // Call the REALTIME function with the appropriate arguments
+    if (activeChat.chatID) {
+      const unsubscribe = onSnapshot(
+        doc(DB, "chats", activeChat.chatID),
+        (doc) => {
+          setFetchedCall(doc.data().voiceCall);
+        }
+      );
+
+      // Clean up the snapshot listener when the component unmounts
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [activeChat.chatID]);
+  //create a client for every load
   useEffect(() => {
     setClient(AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }));
   }, []);
-  const callAppID = import.meta.env.VITE_TEST_CALLID;
   const onCallAccepted = async () => {
+    const FetchedUser = await GETDOC("Users", User.uid);
+    const FetchOtherUser = await GETDOC("Users", activeChat.user.uid);
+    if (FetchedUser.hasCall) {
+      CreateToast("you can only have one call active", "error");
+      return;
+    }
+    if (FetchOtherUser.hasCall) {
+      CreateToast("Other user is in a call right now", "error");
+      return;
+    }
     const handleUserPublished = async (user, mediaType) => {
       await client.subscribe(user, mediaType);
       // if the media type is audio
@@ -41,26 +72,44 @@ const VoiceCall = ({ FetchedCall }) => {
     // Save the local audio track in the state
     setLocalAudioTrack(audioTrack);
     setUserJoined(true);
+    await UPDATEDOC("Users", User.uid, {
+      hasCall: true,
+    });
   };
+  //voice call status watcher
   useEffect(() => {
-    if (FetchedCall?.status === "Accepted") {
-      onCallAccepted();
-      setOnGoingCall(true);
-      setUserJoined(true);
-      UPDATEDOC("Users", User.uid, {
-        hasCall: true,
-      });
-    } else if (FetchedCall?.status === "Ended") {
-      onCallLeave();
-    } else {
-      setOnGoingCall(false);
-      setUserJoined(false);
-    }
+    const handleStatus = async () => {
+      if (FetchedCall?.status === "Accepted") {
+        await onCallAccepted();
+        setOnGoingCall(true);
+        setUserJoined(true);
+      } else if (
+        FetchedCall?.status === "Ended" ||
+        FetchedCall?.status === "Ignored"
+      ) {
+        UPDATEDOC("Users", User.uid, {
+          hasCall: false,
+        });
+        setOnGoingCall(false);
+        setUserJoined(false);
+        await onCallLeave();
+      } else {
+        setOnGoingCall(false);
+        setUserJoined(false);
+      }
+    };
+    handleStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [FetchedCall]);
   const StartCall = async () => {
-    if (User.hasCall) {
+    const FetchedUser = await GETDOC("Users", User.uid);
+    const FetchOtherUser = await GETDOC("Users", activeChat.user.uid);
+    if (FetchedUser.hasCall) {
       CreateToast("you can only have one call active", "error");
+      return;
+    }
+    if (FetchOtherUser.hasCall) {
+      CreateToast("Other user is in a call right now", "error");
       return;
     }
     try {
@@ -71,6 +120,7 @@ const VoiceCall = ({ FetchedCall }) => {
       if (fetchedChat.voiceCall.makerUID) {
         await UPDATEDOC("chats", activeChat.chatID, {
           voiceCall: {
+            TimeStarted: Timestamp.now(),
             channel: activeChat.chatID,
             makerUID: fetchedChat.voiceCall.makerUID,
             remoteUID: User.uid,
@@ -81,6 +131,8 @@ const VoiceCall = ({ FetchedCall }) => {
       } else {
         await UPDATEDOC("chats", activeChat.chatID, {
           voiceCall: {
+            TimeStarted: Timestamp.now(),
+
             channel: activeChat.chatID,
             makerUID: User.uid,
             remoteUID: null,
@@ -100,12 +152,14 @@ const VoiceCall = ({ FetchedCall }) => {
       id: uuid(),
       SenderID: "SYSTEM",
       date: Timestamp.now(),
+      mediaContainer: [],
       text,
     };
     await UPDATEDOC("chats", activeChat.chatID, {
       messages: arrayUnion(objectToSend),
     });
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onCallLeave = async () => {
     try {
       // Unsubscribe from all remote audio tracks
@@ -128,6 +182,7 @@ const VoiceCall = ({ FetchedCall }) => {
       console.error("Error leaving call:", error);
     }
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const leaveCall = async () => {
     await UPDATEDOC("chats", activeChat.chatID, {
       voiceCall: {
@@ -137,20 +192,15 @@ const VoiceCall = ({ FetchedCall }) => {
         status: "Ended",
       },
     });
-    onCallLeave();
+    await UPDATEDOC("Users", User.uid, {
+      hasCall: false,
+    });
     await handleSendUpdate(`${User.displayName} has left a voice call`);
     await handleSendUpdate(`voice call has been ended`);
   };
   useEffect(() => {
     const handleBeforeUnload = async () => {
-      await UPDATEDOC("chats", activeChat.chatID, {
-        voiceCall: {
-          channel: null,
-          makerUID: null,
-          remoteUID: null,
-          status: "Ended",
-        },
-      });
+      await onCallLeave();
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -158,7 +208,8 @@ const VoiceCall = ({ FetchedCall }) => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [activeChat.chatID]);
+  }, [onCallLeave, leaveCall]);
+
   return (
     <div className="VoiceCallWrapper">
       <button

@@ -16,6 +16,11 @@
 }
 .ChatPanel .TopBar .PersonName {
   font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
 }
 .ChatPanel .TopBar .Options {
   width: fit-content;
@@ -31,93 +36,7 @@
   object-fit: cover;
   transition: 0.2s all;
 }
-.ChatPanel .MessagesWrapper {
-  overflow-y: scroll;
-  flex: 2;
-}
-.ChatPanel .BottomBar {
-  background-color: var(--BorderColors);
-  color: black;
-  height: 40px;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-.ChatPanel .BottomBar .Utilities {
-  display: flex;
-  position: relative;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-.ChatPanel .BottomBar .Utilities label {
-  max-height: 25px;
-}
-.Utilities .emoji-icon {
-  width: 25px;
-  height: 25px;
-}
-.ChatPanel .BottomBar textarea {
-  height: 100%;
-  font-size: 1rem;
-  background-color: transparent;
-  border: transparent;
-  resize: none;
-  flex: 2;
-  color: black;
-  font-family: "Arial";
-  font-weight: 400;
-}
-.ChatPanel .BottomBar textarea:focus {
-  outline: none;
-}
-.ChatPanel .BottomBar textarea::placeholder {
-  color: black;
-}
-.ChatPanel .BottomBar button {
-  border: 1px solid var(--backgroundColor);
-  transition: 0.2s all;
-}
-.ChatPanel .BottomBar button:hover {
-  transform: scale(1.05);
-}
-.ChatPanel .BottomBar input:focus {
-  outline: none;
-}
-.ChatPanel .BottomBar img,
-.ChatPanel .TopBar .Options img {
-  cursor: pointer;
-  max-width: 25px;
-  max-height: 25px;
-  transition: 0.2s all;
-}
-.ChatPanel .BottomBar img:hover {
-  transform: scale(1.1);
-}
-.ChatPanel .MessagesWrapper .Message {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin: 2px 20px;
 
-  width: fit-content;
-}
-.ChatPanel .MessagesWrapper .photo-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  overflow-y: scroll;
-}
 #Iframe {
   display: none;
 }
@@ -158,133 +77,9 @@
   animation: blink 1.5s infinite; /* Apply the animation to the element */
 }
 
-.ChatPanel .MessagesWrapper .photo-overlay-content {
-  max-width: 70%;
-  max-height: 70%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ChatPanel .MessagesWrapper .photo-overlay img {
-  width: 100%;
-  border-radius: 15px;
-  height: 100%;
-}
-
-.ChatPanel .MessagesWrapper .close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
 .Emoji-wrapper {
   position: absolute;
   right: 129px;
 
   bottom: 50px;
-}
-.ChatPanel .Message.Sender {
-  justify-content: flex-start;
-  flex-direction: row-reverse;
-  margin-left: auto;
-}
-.ChatPanel .messageBody {
-  display: flex;
-  flex-direction: column;
-}
-.ChatPanel .MessagesWrapper .Date {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  margin-bottom: 20px;
-}
-.ChatPanel .Message.Receiver .messageBody {
-  background-color: var(--SecondLargeColor);
-  color: black;
-  padding: 10px;
-  border-radius: 10px;
-  border-top-left-radius: 0px;
-}
-.ChatPanel .Message.System {
-  background-color: transparent;
-
-  margin: 10px auto;
-}
-.ChatPanel .Message.System .messageWrapper {
-  align-items: center;
-}
-.ChatPanel .Message.Sender .messageBody {
-  background-color: var(--BorderColors);
-  color: black;
-  padding: 10px;
-  border-radius: 10px;
-  border-top-right-radius: 0px;
-}
-.messageBody .Review {
-  cursor: pointer;
-  max-width: 250px;
-  max-height: 250px;
-  border-radius: 15px;
-}
-.ChatPanel .Message .messageInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.ChatPanel .Message .messageInfo .Time {
-  font-size: 0.7rem;
-}
-.ChatPanel .Message .messageInfo img {
-  display: flex;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.messageWrapper {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: flex-end;
-  top: -20px;
-}
-.messageWrapper .UserName {
-  opacity: 0.7;
-  font-size: 0.8rem;
-}
-.ChatPanel .Message.Sender .messageWrapper {
-  align-items: flex-end;
-}
-.CallPopup {
-  z-index: 10;
-  top: 30%;
-  left: 30%;
-  position: absolute;
-  backdrop-filter: blur(10px);
-  width: 300px;
-  height: 300px;
-  color: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  border-radius: 15px;
-  border: 1px solid var(--BorderColors);
-}
-.CallPopup p {
-  color: white;
-}
-.CallPopup .button-wrapper {
-  display: flex;
-  width: 80%;
-  justify-content: space-between;
-  align-items: center;
-}
-.CallPopup .button-wrapper button {
-  width: 70px;
 }

@@ -11,6 +11,7 @@ import {
   where,
   updateDoc,
   onSnapshot,
+  increment,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -270,9 +271,21 @@ export const REALTIME = (collection, id, setData) => {
 
   return unsubscribe;
 };
-export const UPDATEDOC = async (collection = String, id, newData = Object) => {
+export const UPDATEDOC = async (
+  collection = String,
+  id,
+  newData = Object,
+  increment = false,
+  valueToIncrease
+) => {
   try {
-    await updateDoc(doc(DB, collection, id.toString()), newData);
+    if (increment) {
+      await updateDoc(doc(DB, collection, id.toString()), {
+        [valueToIncrease]: increment(1),
+      });
+    } else {
+      await updateDoc(doc(DB, collection, id.toString()), newData);
+    }
   } catch (error) {
     console.log(error);
   }

@@ -25,10 +25,12 @@ const Login = () => {
     try {
       await LOGIN(email, password);
       const User = CURRENTUSER();
+
       await UPDATEDOC("Users", User.uid, {
         active: true,
       });
       const FetchedUser = await GETDOC("Users", User.uid);
+
       dispatch(
         SetUser({
           uid: User.uid,

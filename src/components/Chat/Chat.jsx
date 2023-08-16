@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Chat.css";
 import { useDispatch, useSelector } from "react-redux";
 import { SetActiveChat } from "../../Redux/ActiveChat";
+import { GETDOC, UPDATEDOC } from "../../server";
+import { onSnapshot, doc } from "firebase/firestore";
+import { DB } from "../../server";
 const Chat = ({ id, HandleClick, ChatData }) => {
+  const [Activity, setActivity] = useState(null);
+  //this is the chat head
+  const currentChat = useSelector((state) => ({ ...state.chat }));
+  const currentUser = useSelector((state) => ({ ...state.user })).user;
   const dispatch = useDispatch();
+  //display the time of the last massage
   function formatDateIn12HourFormat(date) {
     const day = date.getDate();
     const month = date.getMonth() + 1; // Month is zero-based, so add 1
@@ -61,9 +69,27 @@ const Chat = ({ id, HandleClick, ChatData }) => {
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
   }
-
-  const currentUser = useSelector((state) => ({ ...state.user })).user;
-  const handleClick = () => {
+  const handleClick = async () => {
+    //get the user chats of the active user
+    const UserChats = await GETDOC("UsersChats", currentUser.uid);
+    //loop over them
+    for (const key in UserChats) {
+      if (key === id /* this is the id of the chat head*/) {
+        UserChats[key].inChat = true;
+        //reset hte unSeenCount
+        UserChats[key].unSeenCount = 0;
+      } else {
+        //make every other chat "inChat" value false
+        UserChats[key].inChat = false;
+      }
+    }
+    //send hte updated value
+    await UPDATEDOC("UsersChats", currentUser.uid, UserChats);
+    //mark the last message as seen
+    await UPDATEDOC("UsersChats", currentUser.uid, {
+      [id + ".lastMessage" + ".UserSeen"]: true,
+    });
+    //redux
     dispatch(
       SetActiveChat({
         chatID: id,
@@ -75,16 +101,43 @@ const Chat = ({ id, HandleClick, ChatData }) => {
       })
     );
   };
+  //if the lastMessage property exists check if the sender id matches the active one
+  //if yes then it will displayed "you", if its from system, nothing will be displayed
+  //if its from the other user then display their name
   const Person = ChatData.lastMessage
     ? currentUser.uid === ChatData.lastMessage.Sender
-      ? "You:"
+      ? "You"
       : ChatData.lastMessage.Sender === "SYSTEM"
       ? ""
       : `${ChatData.userInfo.displayName}`
     : "";
+  useEffect(() => {
+    // Call the REALTIME function with the appropriate arguments
+
+    const unsubscribe = onSnapshot(
+      doc(DB, "Users", ChatData.userInfo.uid),
+      (doc) => {
+        doc.exists() && setActivity(doc.data().active);
+      }
+    );
+
+    // Clean up the snapshot listener when the component unmounts
+    return () => {
+      unsubscribe();
+    };
+  }, [ChatData]);
   return (
-    <div className="Chat" onClick={HandleClick ? HandleClick : handleClick}>
-      <img src={ChatData.userInfo.photoURL} className="ProfilePic" />
+    //render the chat head
+    <div
+      className={`Chat ${currentChat.chatID === id ? "ActiveChat" : ""}`}
+      onClick={HandleClick ? HandleClick : handleClick}
+    >
+      <div className="ProfilePic-wrapper">
+        <img src={ChatData.userInfo.photoURL} className="ProfilePic" />
+        {Activity && (
+          <div className="Activity animate__animated animate__fadeIn"></div>
+        )}
+      </div>
       <div className="Details">
         <div className="Person-Date-wrapper">
           <span className="Person">{ChatData.userInfo.displayName}</span>
@@ -95,13 +148,15 @@ const Chat = ({ id, HandleClick, ChatData }) => {
           <span className="LastText">
             {Person}: {ChatData.lastMessage.text}
             <span>
-              {ChatData.lastMessage.hasPhoto ? "Message Contains an image" : ""}
+              {ChatData.lastMessage.Media ? "Message Contains Media" : ""}
             </span>
-            <span>
-              {ChatData.lastMessage.document
-                ? ChatData.lastMessage.document
-                : ""}
-            </span>
+            {!ChatData.lastMessage.UserSeen && (
+              <span className="UnreadCount">
+                <span className="Number">
+                  {ChatData.unSeenCount != 0 ? ChatData.unSeenCount : ""}
+                </span>
+              </span>
+            )}
           </span>
         )}
       </div>

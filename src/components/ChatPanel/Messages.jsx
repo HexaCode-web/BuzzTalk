@@ -50,7 +50,6 @@ const Messages = () => {
     const isDifferentSender =
       index === 0 || Messages[index - 1].SenderID !== m.SenderID;
     const previousMessage = index === 0 ? null : Messages[index + 1];
-
     return (
       <Message
         key={m.id}

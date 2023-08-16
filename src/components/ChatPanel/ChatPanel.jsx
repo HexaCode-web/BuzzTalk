@@ -11,8 +11,7 @@ import VoiceCall from "./VoiceCall";
 import { VideoCall } from "./VideoCall";
 import CallPopup from "./CallPopup";
 import { SetActiveChat } from "../../Redux/ActiveChat";
-import VideoPopup from "./videoPopup";
-
+import VideoPopup from "./VideoPopup";
 const ChatPanel = () => {
   const [fetchedMeeting, setFetchedMeeting] = useState(null);
   const [FetchedCall, setFetchedCall] = useState(null);

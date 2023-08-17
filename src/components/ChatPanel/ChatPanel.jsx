@@ -115,9 +115,9 @@ const ChatPanel = () => {
       ) : (
         //if not chat is active
         <div className="ChatPanel">
-          <p style={{ margin: "auto" }}>
+          <h4 style={{ margin: "auto" }}>
             select a conversation to start chatting
-          </p>
+          </h4>
         </div>
       )}
     </>

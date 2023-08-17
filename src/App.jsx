@@ -39,6 +39,7 @@ export const CreateToast = (text, type, duration = 5000) => {
 
 function App() {
   const user = useSelector((state) => ({ ...state.user }));
+
   const ProtectedRoute = ({ children }) => {
     if (!user.user) {
       return <Navigate to="/Portal" />;
@@ -46,7 +47,6 @@ function App() {
       return children;
     }
   };
-
   return (
     <>
       <ToastContainer

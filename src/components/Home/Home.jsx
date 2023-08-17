@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../Sidebar/Navbar/Navbar";
 import Chats from "../Sidebar/Chats/Chats";
 import ChatPanel from "../ChatPanel/ChatPanel";
@@ -6,10 +6,13 @@ import ChatPanel from "../ChatPanel/ChatPanel";
 import "./Home.css";
 import { UPDATEDOC } from "../../server";
 import { useSelector, useDispatch } from "react-redux";
-import { changeActive } from "../../Redux/UserAuth";
+import { PopupElement } from "../PopupElement";
+
 const Home = () => {
   const currentUser = useSelector((state) => ({ ...state.user })).user;
+
   const dispatch = useDispatch();
+
   const ActiveRef = useRef(currentUser.active);
   useEffect(() => {
     const handleBeforeUnload = async (e) => {
@@ -47,6 +50,7 @@ const Home = () => {
   }, [currentUser]);
   return (
     <div className="Home">
+      <PopupElement />
       <div className="Container">
         <div className="SideBar">
           <Navbar />

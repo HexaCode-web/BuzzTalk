@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { GETDOC, UPDATEDOC } from "../../server";
 import { v4 as uuid } from "uuid";
-import { Timestamp, arrayUnion } from "firebase/firestore";
+import { Timestamp, arrayUnion, serverTimestamp } from "firebase/firestore";
 import "./CallPopup.css";
 const CallPopup = ({ FetchedCall }) => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
@@ -10,19 +10,47 @@ const CallPopup = ({ FetchedCall }) => {
   const [seconds, setSeconds] = useState(10);
   let intervalId;
   //send message update
-  async function handleSendUpdate(text) {
+  const handleSendUpdate = async (text) => {
     let objectToSend = {
       id: uuid(),
       SenderID: "SYSTEM",
       date: Timestamp.now(),
       mediaContainer: [],
-
       text,
     };
     await UPDATEDOC("chats", activeChat.chatID, {
       messages: arrayUnion(objectToSend),
     });
-  }
+    await UPDATEDOC("UsersChats", User.uid, {
+      [activeChat.chatID + ".inChat"]: true,
+      [activeChat.chatID + ".lastMessage"]: {
+        UserSeen: true,
+        text: text,
+        Sender: "SYSTEM",
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
+      },
+      [activeChat.chatID + ".date"]: serverTimestamp(),
+      [activeChat.chatID + ".unSeenCount"]: 0,
+    });
+    //fetch the data from the other user's chat list
+    const fetchedData = await GETDOC("UsersChats", activeChat.user.uid);
+    const ChatData = fetchedData[activeChat.chatID];
+    const FetchedUser = await GETDOC("Users", activeChat.user.uid);
+    await UPDATEDOC("UsersChats", activeChat.user.uid, {
+      [activeChat.chatID + ".lastMessage"]: {
+        //update the last message with the text
+        //if the other user was in chat then set this to true
+        UserSeen: ChatData.inChat && FetchedUser.active ? true : false,
+        text: text,
+        Sender: "SYSTEM",
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
+      },
+      //if the other user in chat then set this to 0 other than that increment the value by one
+      [activeChat.chatID + ".unSeenCount"]:
+        ChatData.inChat && FetchedUser.active ? 0 : ChatData.unSeenCount + 1,
+      [activeChat.chatID + ".date"]: serverTimestamp(),
+    });
+  };
   //incase of call accept
   const AcceptCall = async () => {
     let fetchedChat = await GETDOC("chats", activeChat.chatID);

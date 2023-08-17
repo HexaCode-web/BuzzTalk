@@ -106,10 +106,10 @@ const Chat = ({ id, HandleClick, ChatData }) => {
   //if its from the other user then display their name
   const Person = ChatData.lastMessage
     ? currentUser.uid === ChatData.lastMessage.Sender
-      ? "You"
+      ? "You:"
       : ChatData.lastMessage.Sender === "SYSTEM"
       ? ""
-      : `${ChatData.userInfo.displayName}`
+      : `${ChatData.userInfo.displayName}:`
     : "";
   useEffect(() => {
     // Call the REALTIME function with the appropriate arguments
@@ -146,7 +146,7 @@ const Chat = ({ id, HandleClick, ChatData }) => {
         </div>
         {ChatData.lastMessage && (
           <span className="LastText">
-            {Person}: {ChatData.lastMessage.text}
+            {Person} {ChatData.lastMessage.text}
             <span>
               {ChatData.lastMessage.Media ? "Message Contains Media" : ""}
             </span>

@@ -112,6 +112,16 @@ export const VideoCall = ({ fetchedMeeting }) => {
     }, 2000);
   };
   const startMeeting = async () => {
+    const FetchedUser = await GETDOC("Users", user.uid);
+    const FetchOtherUser = await GETDOC("Users", activeChat.user.uid);
+    if (FetchedUser.hasCall) {
+      CreateToast("you can only have one call active", "error");
+      return;
+    }
+    if (FetchOtherUser.hasCall) {
+      CreateToast("Other user is in a call right now", "error");
+      return;
+    }
     //set up the domain
     let fetchedData = await GETDOC("chats", activeChat.chatID);
     let fetchedVideoCall = fetchedData.VideoCall;
@@ -156,21 +166,32 @@ export const VideoCall = ({ fetchedMeeting }) => {
       messages: arrayUnion(objectToSend),
     });
     await UPDATEDOC("UsersChats", user.uid, {
+      [activeChat.chatID + ".inChat"]: true,
       [activeChat.chatID + ".lastMessage"]: {
+        UserSeen: true,
         text: text,
         Sender: "SYSTEM",
-        UserSeen: true,
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
       },
       [activeChat.chatID + ".date"]: serverTimestamp(),
+      [activeChat.chatID + ".unSeenCount"]: 0,
     });
+    //fetch the data from the other user's chat list
+    const fetchedData = await GETDOC("UsersChats", activeChat.user.uid);
+    const ChatData = fetchedData[activeChat.chatID];
     const FetchedUser = await GETDOC("Users", activeChat.user.uid);
-
     await UPDATEDOC("UsersChats", activeChat.user.uid, {
       [activeChat.chatID + ".lastMessage"]: {
+        //update the last message with the text
+        //if the other user was in chat then set this to true
+        UserSeen: ChatData.inChat && FetchedUser.active ? true : false,
         text: text,
         Sender: "SYSTEM",
-        UserSeen: activeChat.inChat && FetchedUser.active ? true : false,
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
       },
+      //if the other user in chat then set this to 0 other than that increment the value by one
+      [activeChat.chatID + ".unSeenCount"]:
+        ChatData.inChat && FetchedUser.active ? 0 : ChatData.unSeenCount + 1,
       [activeChat.chatID + ".date"]: serverTimestamp(),
     });
   };

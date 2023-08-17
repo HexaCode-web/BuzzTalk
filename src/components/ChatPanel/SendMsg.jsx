@@ -22,7 +22,6 @@ import txt from "../../assets/txt.png";
 const SendMsg = () => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const currentUser = useSelector((state) => ({ ...state.user })).user;
-  const textareaRef = useRef(null);
   const [showPicker, setShowPicker] = useState(false);
   const [text, setText] = useState("");
   const [mediaAR, setMediaAR] = useState([]);
@@ -182,7 +181,6 @@ const SendMsg = () => {
       handleSend();
     }
   };
-  console.log(mediaAR);
   const RemoveUpload = (id) => {
     setMediaAR((prev) =>
       prev.filter((media) => {
@@ -266,7 +264,7 @@ const SendMsg = () => {
           disabled={disableInput}
           className="Message"
           type="text"
-          ref={textareaRef}
+          id="Message"
           onKeyPress={handleKeyPress}
           placeholder="Type something..."
           value={text}

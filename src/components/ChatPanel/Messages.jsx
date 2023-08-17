@@ -8,6 +8,8 @@ import { DB } from "../../server";
 
 const Messages = () => {
   const [Messages, setMessages] = useState([]);
+  const activeChat = useSelector((state) => ({ ...state.chat }));
+
   function LastTextMin(messageDate, previousMessage) {
     const date = new Date(
       messageDate.seconds * 1000 + messageDate.nanoseconds / 1000000
@@ -29,7 +31,6 @@ const Messages = () => {
     return NewTextMin === OldTextMin;
   }
 
-  const activeChat = useSelector((state) => ({ ...state.chat }));
   useEffect(() => {
     // Call the REALTIME function with the appropriate arguments
 
@@ -59,7 +60,18 @@ const Messages = () => {
       />
     );
   });
-  return <div>{RenderMessages}</div>;
+  return (
+    <div>
+      {Messages.length > 0 ? (
+        RenderMessages
+      ) : (
+        <h4 style={{ textAlign: "center" }}>
+          this is the very start of the conversation with{" "}
+          {activeChat.user.displayName}
+        </h4>
+      )}
+    </div>
+  );
 };
 
 export default Messages;

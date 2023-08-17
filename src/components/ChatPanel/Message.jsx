@@ -44,7 +44,7 @@ const Message = ({ message, HideUserName, hideDate }) => {
     setShowOverlay(false);
   };
   let systemSent = message.SenderID === "SYSTEM" ? true : false;
-  const RenderMedia = message.mediaContainer.map((media) => {
+  const RenderMedia = message.mediaContainer?.map((media) => {
     const validExtensions = [
       "pdf",
       "txt",

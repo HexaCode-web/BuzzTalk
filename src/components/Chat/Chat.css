@@ -63,6 +63,7 @@
   overflow: hidden; /* Hide the overflowing text */
   text-overflow: ellipsis; /* Display ellipsis (...) for the overflowed text */
 }
+
 .Chat .Details .Person-Date-wrapper {
   display: flex;
   justify-content: space-between;

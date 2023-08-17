@@ -41,6 +41,7 @@ const Login = () => {
           hasCall: FetchedUser.hasCall,
         })
       );
+      sessionStorage.setItem("Confirm", false);
       navigate("/");
 
       dispatch(setActivePage("null"));

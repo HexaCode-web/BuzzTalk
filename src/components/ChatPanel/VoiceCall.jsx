@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GETDOC, UPDATEDOC } from "../../server";
 import voiceChat from "../../assets/voiceChat.png";
 import { v4 as uuid } from "uuid";
-import { onSnapshot, doc } from "firebase/firestore";
+import { onSnapshot, doc, serverTimestamp } from "firebase/firestore";
 import { DB } from "../../server";
 import { Timestamp, arrayUnion } from "firebase/firestore";
 import { CreateToast } from "../../App";
@@ -41,16 +41,6 @@ const VoiceCall = () => {
     setClient(AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }));
   }, []);
   const onCallAccepted = async () => {
-    const FetchedUser = await GETDOC("Users", User.uid);
-    const FetchOtherUser = await GETDOC("Users", activeChat.user.uid);
-    if (FetchedUser.hasCall) {
-      CreateToast("you can only have one call active", "error");
-      return;
-    }
-    if (FetchOtherUser.hasCall) {
-      CreateToast("Other user is in a call right now", "error");
-      return;
-    }
     const handleUserPublished = async (user, mediaType) => {
       await client.subscribe(user, mediaType);
       // if the media type is audio
@@ -157,6 +147,35 @@ const VoiceCall = () => {
     };
     await UPDATEDOC("chats", activeChat.chatID, {
       messages: arrayUnion(objectToSend),
+    });
+    await UPDATEDOC("UsersChats", User.uid, {
+      [activeChat.chatID + ".inChat"]: true,
+      [activeChat.chatID + ".lastMessage"]: {
+        UserSeen: true,
+        text: text,
+        Sender: "SYSTEM",
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
+      },
+      [activeChat.chatID + ".date"]: serverTimestamp(),
+      [activeChat.chatID + ".unSeenCount"]: 0,
+    });
+    //fetch the data from the other user's chat list
+    const fetchedData = await GETDOC("UsersChats", activeChat.user.uid);
+    const ChatData = fetchedData[activeChat.chatID];
+    const FetchedUser = await GETDOC("Users", activeChat.user.uid);
+    await UPDATEDOC("UsersChats", activeChat.user.uid, {
+      [activeChat.chatID + ".lastMessage"]: {
+        //update the last message with the text
+        //if the other user was in chat then set this to true
+        UserSeen: ChatData.inChat && FetchedUser.active ? true : false,
+        text: text,
+        Sender: "SYSTEM",
+        Media: objectToSend.mediaContainer.length > 0 ? true : false,
+      },
+      //if the other user in chat then set this to 0 other than that increment the value by one
+      [activeChat.chatID + ".unSeenCount"]:
+        ChatData.inChat && FetchedUser.active ? 0 : ChatData.unSeenCount + 1,
+      [activeChat.chatID + ".date"]: serverTimestamp(),
     });
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -13,6 +13,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const LogOut = async () => {
     const FetchedUser = await GETDOC("Users", currentUser.user.uid);
+    sessionStorage.setItem("Confirm", false);
 
     if (FetchedUser.hasCall) {
       CreateToast("Please end the active call first", "error");

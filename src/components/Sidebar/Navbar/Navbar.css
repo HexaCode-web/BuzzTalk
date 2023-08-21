@@ -19,6 +19,14 @@
   height: 25px;
   object-fit: cover;
 }
+.Info h5 {
+  margin: 0;
+  line-height: 12px;
+}
+.Info span {
+  font-size: 0.9rem;
+  opacity: 0.5;
+}
 .Navbar .User {
   gap: 10px;
   display: flex;

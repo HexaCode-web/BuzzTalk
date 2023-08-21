@@ -44,7 +44,11 @@ const Navbar = () => {
       <h4 className="Logo">BuzzTalk</h4>
       <div className="User">
         <img src={currentUser.user.photoURL} className="ProfilePic" />
-        <h5>{currentUser.user.displayName}</h5>
+        <div className="Info">
+          <h5>{currentUser.user.displayName}</h5>
+          <span>@{currentUser.user.userName}</span>
+        </div>
+
         <button
           className="button"
           onClick={() => {

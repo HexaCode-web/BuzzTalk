@@ -97,6 +97,7 @@ const Chat = ({ id, HandleClick, ChatData }) => {
           displayName: ChatData.userInfo.displayName,
           photoURL: ChatData.userInfo.photoURL,
           uid: ChatData.userInfo.uid,
+          userName: ChatData.userInfo.userName,
         },
       })
     );

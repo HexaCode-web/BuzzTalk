@@ -93,10 +93,12 @@ const SendMsg = () => {
   };
   //on send button
   const handleSend = async () => {
-    setDisableInput(true);
     //clear the text
 
     setText("");
+    const fetchedData = await GETDOC("UsersChats", activeChat.user.uid);
+    const ChatData = fetchedData[activeChat.chatID];
+    const FetchedUser = await GETDOC("Users", activeChat.user.uid);
     //prebuild the object to send
     let objectToSend = {
       id: uuid(),
@@ -104,6 +106,12 @@ const SendMsg = () => {
       date: Timestamp.now(),
       text: "",
       mediaContainer: [],
+      status:
+        ChatData.inChat && FetchedUser.active
+          ? "Seen"
+          : FetchedUser.active
+          ? "Delivered"
+          : "Sent",
     };
 
     //if media exists
@@ -153,9 +161,7 @@ const SendMsg = () => {
       [activeChat.chatID + ".unSeenCount"]: 0,
     });
     //fetch the data from the other user's chat list
-    const fetchedData = await GETDOC("UsersChats", activeChat.user.uid);
-    const ChatData = fetchedData[activeChat.chatID];
-    const FetchedUser = await GETDOC("Users", activeChat.user.uid);
+
     await UPDATEDOC("UsersChats", activeChat.user.uid, {
       [activeChat.chatID + ".lastMessage"]: {
         //update the last message with the text
@@ -172,7 +178,6 @@ const SendMsg = () => {
     });
     //empty the document and the photo
     setMediaAR([]);
-    setDisableInput(false);
   };
   //send when pressing enter
   const handleKeyPress = (e) => {

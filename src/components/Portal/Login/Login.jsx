@@ -30,13 +30,14 @@ const Login = () => {
         active: true,
       });
       const FetchedUser = await GETDOC("Users", User.uid);
-
       dispatch(
         SetUser({
           uid: User.uid,
-          displayName: User.displayName,
+          displayName: FetchedUser.displayName,
+          userName: FetchedUser.userName,
           photoURL: User.photoURL,
           email: User.email,
+          UserChats: FetchedUser.UserChats,
           active: FetchedUser.active,
           hasCall: FetchedUser.hasCall,
         })

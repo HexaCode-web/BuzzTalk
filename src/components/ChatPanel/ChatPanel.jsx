@@ -6,7 +6,7 @@ import SendMsg from "./SendMsg";
 import Messages from "./Messages";
 import { useDispatch, useSelector } from "react-redux";
 import { onSnapshot, doc } from "firebase/firestore";
-import { DB, UPDATEDOC } from "../../server";
+import { DB, UPDATEDOC, GETDOC } from "../../server";
 import VoiceCall from "./VoiceCall";
 import { VideoCall } from "./VideoCall";
 import CallPopup from "./CallPopup";
@@ -67,13 +67,38 @@ const ChatPanel = () => {
       };
     }
   }, []);
+  useEffect(() => {
+    const markAsSeen = async () => {
+      const ChatData = await GETDOC("chats", activeChat.chatID);
+      ChatData.messages.forEach((message) => {
+        if (
+          message.status === "Delivered" &&
+          message.SenderID !== currentUser.uid
+        ) {
+          console.log(true);
+
+          message.status = "Seen";
+        }
+      });
+
+      UPDATEDOC("chats", activeChat.chatID, {
+        messages: ChatData.messages,
+      });
+    };
+
+    markAsSeen();
+  }, []);
+  console.log(activeChat);
   return (
     <>
       {activeChat.user ? (
         <div className="ChatPanel">
           <div className="TopBar">
             <span className="PersonName">
-              {activeChat.user.displayName}
+              <div className="Info">
+                <h5>{activeChat.user.displayName}</h5>
+                <span>@{activeChat.user.userName}</span>
+              </div>
               <div
                 id="circle"
                 className={`circle ${

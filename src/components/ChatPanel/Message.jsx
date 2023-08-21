@@ -2,10 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import PhotoOverlay from "./PhotoOverlay";
 import "./Message.css";
+import Delivered from "../../assets/delivered.png";
+import Seen from "../../assets/seen.png";
+import Sent from "../../assets/sent.png";
 const Message = ({ message, HideUserName, hideDate }) => {
   const activeChat = useSelector((state) => ({ ...state.chat }));
   const currentUser = useSelector((state) => ({ ...state.user })).user;
   const [showOverlay, setShowOverlay] = useState(false);
+  const [messageStatus, setMessageStatus] = useState(null);
   const ref = useRef();
 
   useEffect(() => {
@@ -20,13 +24,13 @@ const Message = ({ message, HideUserName, hideDate }) => {
     // Get the time in 12-hour format
     const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
     const minutes = date.getMinutes();
-    const ampm = date.getHours() >= 12 ? "PM" : "AM";
+    const AmPm = date.getHours() >= 12 ? "PM" : "AM";
 
     // Format the date and time as a string
     const formattedDate = `${month}/${day}/${year}`;
     const formattedTime = `${hours}:${minutes
       .toString()
-      .padStart(2, "0")} ${ampm}`;
+      .padStart(2, "0")} ${AmPm}`;
 
     return ` ${formattedDate} ${formattedTime} `;
   }
@@ -44,7 +48,7 @@ const Message = ({ message, HideUserName, hideDate }) => {
     setShowOverlay(false);
   };
   let systemSent = message.SenderID === "SYSTEM" ? true : false;
-  const RenderMedia = message.mediaContainer?.map((media) => {
+  const renderMedia = message.mediaContainer?.map((media) => {
     const validExtensions = [
       "pdf",
       "txt",
@@ -74,6 +78,26 @@ const Message = ({ message, HideUserName, hideDate }) => {
       );
     }
   });
+
+  useEffect(() => {
+    const SetStatus = () => {
+      switch (message.status) {
+        case "Sent":
+          setMessageStatus(Sent);
+          break;
+        case "Delivered":
+          setMessageStatus(Delivered);
+          break;
+        case "Seen":
+          setMessageStatus(Seen);
+          break;
+
+        default:
+          break;
+      }
+    };
+    SetStatus();
+  }, [message.status]);
   return (
     <div
       className={`Message ${
@@ -103,11 +127,13 @@ const Message = ({ message, HideUserName, hideDate }) => {
         )}
         <div className="messageBody">
           <span>{message.text}</span>
-          {RenderMedia}
+          {renderMedia}
         </div>
-        {!hideDate && (
-          <div className="Date">{formatDateIn12HourFormat(date)}</div>
-        )}
+
+        <div className="Date">
+          {!hideDate && <span> {formatDateIn12HourFormat(date)}</span>}
+          {Sending && <img className="status" src={messageStatus} />}
+        </div>
       </div>
     </div>
   );

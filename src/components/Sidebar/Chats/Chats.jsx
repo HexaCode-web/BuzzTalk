@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import "./Chats.css";
 import Chat from "../../Chat/Chat";
 import { QUERY, SETDOC, GETDOC, UPDATEDOC, REALTIME } from "../../../server";
-import { serverTimestamp } from "firebase/firestore";
+import { arrayUnion, serverTimestamp } from "firebase/firestore";
 import { useSelector, useDispatch } from "react-redux";
 import { SetActiveChat } from "../../../Redux/ActiveChat";
 import loadingGIF from "../../../assets/loading-97.gif";
@@ -29,7 +29,7 @@ const Chats = () => {
   }, [currentUser.uid]);
   const RunQuery = async () => {
     setLoading(true);
-    const matches = await QUERY("Users", "displayName", "==", searchValue);
+    const matches = await QUERY("Users", "userName", "==", searchValue);
     if (matches.length === 0) {
       setSearchChat(null);
 
@@ -58,6 +58,7 @@ const Chats = () => {
     }
   }, [searchValue]);
   const NewChat = async () => {
+    setLoading(true);
     const combinedID =
       currentUser.uid > searchChat.uid
         ? currentUser.uid + searchChat.uid
@@ -69,6 +70,12 @@ const Chats = () => {
 
       return;
     }
+    await UPDATEDOC("Users", currentUser.uid, {
+      UserChats: arrayUnion(combinedID),
+    });
+    await UPDATEDOC("Users", searchChat.uid, {
+      UserChats: arrayUnion(combinedID),
+    });
     await SETDOC(
       "chats",
       combinedID,
@@ -94,6 +101,7 @@ const Chats = () => {
         uid: searchChat.uid,
         displayName: searchChat.displayName,
         photoURL: searchChat.photoURL,
+        userName: searchChat.userName,
       },
       [combinedID + ".unSeenCount"]: 0,
       [combinedID + ".date"]: serverTimestamp(),
@@ -103,6 +111,7 @@ const Chats = () => {
         uid: currentUser.uid,
         displayName: currentUser.displayName,
         photoURL: currentUser.photoURL,
+        userName: currentUser.userName,
       },
       [combinedID + ".unSeenCount"]: 0,
 
@@ -114,11 +123,13 @@ const Chats = () => {
         chatID: combinedID,
         otherUser: {
           displayName: searchChat.displayName,
+          userName: searchChat.userName,
           photoURL: searchChat.photoURL,
           uid: searchChat.uid,
         },
       })
     );
+    setLoading(false);
   };
 
   const RenderGlobalSearch = () => {

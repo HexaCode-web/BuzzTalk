@@ -26,25 +26,37 @@ const SignUp = () => {
     e.preventDefault();
 
     // Destructure form fields
-    const [displayNameField, emailField, passwordField, profilePicField] =
-      e.target;
+    const [
+      displayNameField,
+      userNameField,
+      emailField,
+      passwordField,
+      profilePicField,
+    ] = e.target;
     const displayName = displayNameField.value;
+    const userName = userNameField.value;
+
     const email = emailField.value;
     const password = passwordField.value;
     const profilePic = profilePicField.files[0];
-
+    if (userName.includes(" ")) {
+      setErr("userName cant include spaces");
+      return;
+    }
     // Check if uploading is in progress
     if (uploading) {
-      CreateToast("Creating User, please wait...", "error");
+      setErr("Creating User, please wait...");
       return;
     }
 
     // Indicate user creation in progress
     CreateToast("Creating User");
     setUploading(true);
-    const matches = await QUERY("Users", "displayName", "==", displayName);
+    const matches = await QUERY("Users", "userName", "==", userName);
     if (matches.length > 0) {
-      setErr("Display name is already taken");
+      setErr("userName name is already taken");
+      setUploading(false);
+
       return;
     }
     try {
@@ -52,7 +64,7 @@ const SignUp = () => {
       const photoURL = await UPLOADPHOTO(user.uid, profilePic);
       const UpdatedUser = await UPDATEPROFILE(
         user,
-        { displayName, photoURL },
+        { displayName: userName, photoURL },
         false
       );
       await SETDOC(
@@ -60,7 +72,9 @@ const SignUp = () => {
         user.uid,
         {
           displayName,
+          userName: userName,
           email,
+          UserChats: [],
           photoURL,
           uid: user.uid,
           hasCall: false,
@@ -76,8 +90,9 @@ const SignUp = () => {
         const User = CURRENTUSER();
         dispatch(
           SetUser({
+            userName: userName,
             uid: User.uid,
-            displayName: User.displayName,
+            displayName: displayName,
             photoURL: User.photoURL,
             email: User.email,
           })
@@ -141,6 +156,17 @@ const SignUp = () => {
           />
         </div>
         <div
+          className="formItem animate__animated animate__fadeInLeft"
+          style={{ animationDelay: ".5s" }}
+        >
+          <input
+            required={true}
+            type="Text"
+            name="userName"
+            placeholder="userName"
+          />
+        </div>
+        <div
           className="formItem animate__animated animate__fadeInRight"
           style={{ animationDelay: ".5s" }}
         >
@@ -171,7 +197,7 @@ const SignUp = () => {
             <img src={Upload} style={{ width: "25px", cursor: "pointer" }} />
           </label>
           <input
-            required={true}
+            required={false}
             type="file"
             accept="image/*"
             hidden

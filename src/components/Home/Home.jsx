@@ -4,16 +4,37 @@ import Chats from "../Sidebar/Chats/Chats";
 import ChatPanel from "../ChatPanel/ChatPanel";
 
 import "./Home.css";
-import { UPDATEDOC } from "../../server";
+import { GETDOC, UPDATEDOC } from "../../server";
 import { useSelector, useDispatch } from "react-redux";
 import { PopupElement } from "../PopupElement";
 
 const Home = () => {
   const currentUser = useSelector((state) => ({ ...state.user })).user;
+  const activeChat = useSelector((state) => ({ ...state.chat }));
 
   const dispatch = useDispatch();
 
   const ActiveRef = useRef(currentUser.active);
+  useEffect(() => {
+    const SetActive = async () => {
+      try {
+        if (ActiveRef) {
+          UPDATEDOC("Users", currentUser.uid, {
+            active: true,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const intervalId = setInterval(SetActive, 50000); // Call fetchData every 5 seconds
+
+    return () => {
+      clearInterval(intervalId); // Clean up interval when component unmounts
+    };
+  }, []);
+
   useEffect(() => {
     const handleBeforeUnload = async (e) => {
       e.preventDefault();
@@ -33,6 +54,31 @@ const Home = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [currentUser, dispatch]);
+  useEffect(() => {
+    const markAsDelivered = async () => {
+      if (activeChat.chatID) {
+        return;
+      }
+
+      const UserChatsIDS = currentUser.UserChats;
+
+      UserChatsIDS.forEach(async (ChatID) => {
+        const ChatData = await GETDOC("chats", ChatID);
+        ChatData.messages.forEach((message) => {
+          if (
+            message.status === "Sent" &&
+            message.SenderID !== currentUser.uid
+          ) {
+            message.status = "Delivered";
+          }
+        });
+        await UPDATEDOC("chats", ChatID, {
+          messages: ChatData.messages,
+        });
+      });
+    };
+    markAsDelivered();
+  }, []);
   useEffect(() => {
     const intervalId = setInterval(async () => {
       if (ActiveRef.current === false) {

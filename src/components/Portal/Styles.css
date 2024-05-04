@@ -29,3 +29,8 @@ form {
 form button {
   color: black !important;
 }
+@media only screen and (max-width: 768px) {
+  .Form-wrapper {
+    width: 100%;
+  }
+}

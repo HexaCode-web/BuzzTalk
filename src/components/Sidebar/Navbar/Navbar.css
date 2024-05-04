@@ -13,12 +13,7 @@
 .Navbar .Logo {
   font-weight: 700;
 }
-.Navbar .ProfilePic {
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  object-fit: cover;
-}
+
 .Info h5 {
   margin: 0;
   line-height: 12px;
@@ -27,12 +22,7 @@
   font-size: 0.9rem;
   opacity: 0.5;
 }
-.Navbar .User {
-  gap: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 .Navbar button {
   background-color: transparent;
   border: 1px solid var(--backgroundColor);

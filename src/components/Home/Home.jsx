@@ -7,6 +7,7 @@ import "./Home.css";
 import { GETDOC, UPDATEDOC } from "../../server";
 import { useSelector, useDispatch } from "react-redux";
 import { PopupElement } from "../PopupElement";
+import Footer from "../Footer/Footer";
 
 const Home = () => {
   const currentUser = useSelector((state) => ({ ...state.user })).user;
@@ -101,7 +102,7 @@ const Home = () => {
         <div className="SideBar">
           <Navbar />
           <Chats />
-          <div className="BottomStyles"></div>
+          <Footer />
         </div>
 
         <ChatPanel />

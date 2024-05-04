@@ -22,9 +22,3 @@
   justify-content: flex-start;
   align-items: flex-start;
 }
-.Home .Container .SideBar .BottomStyles {
-  height: 85px;
-  background-color: var(--BorderColors);
-  width: 100%;
-  margin-top: auto;
-}

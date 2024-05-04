@@ -42,22 +42,14 @@ const Navbar = () => {
   return (
     <div className="Navbar">
       <h4 className="Logo">BuzzTalk</h4>
-      <div className="User">
-        <img src={currentUser.user.photoURL} className="ProfilePic" />
-        <div className="Info">
-          <h5>{currentUser.user.displayName}</h5>
-          <span>@{currentUser.user.userName}</span>
-        </div>
-
-        <button
-          className="button"
-          onClick={() => {
-            LogOut();
-          }}
-        >
-          Logout
-        </button>
-      </div>
+      <button
+        className="button"
+        onClick={() => {
+          LogOut();
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 };

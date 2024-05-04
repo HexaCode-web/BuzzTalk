@@ -1,0 +1,24 @@
+.BottomStyles {
+  background-color: var(--BorderColors);
+  color: black;
+  display: flex;
+  padding: 10px 5px;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  width: 100%;
+  margin-top: auto;
+}
+
+.BottomStyles .ProfilePic {
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  object-fit: cover;
+}
+.BottomStyles .User {
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
